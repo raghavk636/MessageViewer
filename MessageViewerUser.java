@@ -57,6 +57,12 @@ public class MessageViewerUser implements SocialMediaUser{
 		this.blocked = blockedFriends;
 	}
 	
-	
+	public void addFriend(MessageViewerUser friend){
+		ArrayList<MessageViewerUser>.add(friend);
+	}
+
+	public void removeFriend(MessageViewerUser friend){
+		ArrayList<MessageViewerUser>.remove(friend);
+	}
 
 }
