@@ -198,8 +198,8 @@ public void saveFriendsToFriendsFile() {
 
     public void sendMessage(MessageViewerUser recipient, String content) throws BlockedUserException {
         // Check if the person is blocked
-        synchronized (blockedFriends) {
-            if (blockedFriends.contains(recipient) || recipient.blockedFriends.contains(this)) {
+        synchronized (blocked) {
+            if (blocked.contains(recipient) || recipient.blocked.contains(this)) {
                 throw new BlockedUserException("Blocked cant send the message.");
             }
         }
