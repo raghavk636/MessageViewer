@@ -14,9 +14,13 @@ public class MessageViewerUser implements SocialMediaUser{
     private final ArrayList<MessageThread> messageThreads = new ArrayList<>();
     private final String friendsFile;
     private final String blockedFile;
+	
+    private static ArrayList<MessageViewerUser> currentUsers = loadCurrentUsersFromFile(); //arraylist of current users
 
+    private static final String currentUsersFile = "current_users.dat";
 
-
+//constructor 
+	
     public MessageViewerUser(String name, String username, String password) {
         this.name = name;
         this.username = username;
@@ -25,6 +29,32 @@ public class MessageViewerUser implements SocialMediaUser{
         this.blockedFile = "blocked_list_" + username + ".dat" ;
         this.friends = loadFriendsFromFriendsFile();
         this.blocked = loadBlockedFromBlockedFile();
+    }
+
+	// Method to add a user to currentUsers list and save
+	
+    private void addUserToCurrentUsers(MessageViewerUser user) {
+        currentUsers.add(user);
+        saveCurrentUsersToFile(); // Save updated list to file
+    }
+
+    // Method to save the currentUsers list to a file
+	
+    private static void saveCurrentUsersToFile() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(currentUsersFile))) {
+            oos.writeObject(currentUsers);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Method to load currentUsers list from a file (for initial setup)
+    private static ArrayList<MessageViewerUser> loadCurrentUsersFromFile() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(currentUsersFile))) {
+            return (ArrayList<MessageViewerUser>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            return new ArrayList<>(); // Return an empty list if file doesn't exist or error occurs
+        }
     }
 
     public String getName() {
@@ -221,5 +251,7 @@ public void saveFriendsToFriendsFile() {
         }
     }
 }
+
+
 
 }
