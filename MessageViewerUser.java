@@ -8,8 +8,12 @@ public class MessageViewerUser implements SocialMediaUser{
     private String password;
     private ArrayList<MessageViewerUser> friends;
     private ArrayList<MessageViewerUser> blocked;
+    private final ArrayList<Message> sentMessages = new ArrayList<>();
+    private final ArrayList<Message> receivedMessages = new ArrayList<>();
+    private final ArrayList<MessageThread> messageThreads = new ArrayList<>();
     private final String friendsFile;
     private final String blockedFile;
+
 
 
     public MessageViewerUser(String name, String username, String password) {
@@ -44,6 +48,18 @@ public class MessageViewerUser implements SocialMediaUser{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+	
+    public List<Message> getSentMessages() {
+        return new ArrayList<>(sentMessages);
+    }
+    
+    public List<Message> getReceivedMessages() {
+        return new ArrayList<>(receivedMessages);
+    }
+    
+    public List<MessageThread> getMessageThreads() {
+        return new ArrayList<>(messageThreads);
     }
 
     public ArrayList<MessageViewerUser> getFriends() {
@@ -164,4 +180,45 @@ public void saveFriendsToFriendsFile() {
 
     //////////
 
+}
+// Messaging Methods
+    private MessageThread getMessageThread(MessageViewerUser otherUser) {
+        synchronized (messageThreads) {
+            for (MessageThread thread : messageThreads) {
+                if ((thread.getUser1().equals(this) && thread.getUser2().equals(otherUser)) ||
+                        (thread.getUser1().equals(otherUser) && thread.getUser2().equals(this))) {
+                    return thread;
+                }
+            }
+            // If theres no existing threads, then create a new one
+            MessageThread newThread = new MessageThread(this, otherUser);
+            messageThreads.add(newThread);
+            return newThread;
+        }
+    }
+
+    public void sendMessage(MessageViewerUser recipient, String content) throws BlockedUserException {
+        // Check if the person is blocked
+        synchronized (blockedFriends) {
+            if (blockedFriends.contains(recipient) || recipient.blockedFriends.contains(this)) {
+                throw new BlockedUserException("Blocked cant send the message.");
+            }
+        }
+
+        // Create msg and add it to the correct thread
+        MessageThread thread;
+        synchronized (messageThreads) {
+            thread = getMessageThread(recipient);
+        }
+        thread.addMessage(content, this);
+
+        // Track sent and received messages
+        Message message = new Message(content, this, recipient);
+        synchronized (sentMessages) {
+            sentMessages.add(message);
+        }
+        synchronized (recipient.receivedMessages) {
+            recipient.receivedMessages.add(message);
+        }
+    }
 }
