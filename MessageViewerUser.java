@@ -58,29 +58,37 @@ public class MessageViewerUser implements SocialMediaUser{
     }
 
     public void addFriend(MessageViewerUser friend){
-        ArrayList<MessageViewerUser>.add(friend);
+	    if(friends.contains(friend)){
+		    System.out.println("This user is already a friend!"); //message if friends is already in the friends arrayList
+	    } else {
+        friends.add(friend); //fixed bug here.  ArrayList<MessageViewerUser> --> friends
+	    }
     }
 
     public void removeFriend(MessageViewerUser friend){
-        ArrayList<MessageViewerUser>.remove(friend);
-    }
+	        if(!friends.contains(friend)){
+		    System.out.println("This user is not in the friends list!"); //message if friends is not in the friends arrayList
+	    } else {
+        friends.remove(friend); //fixed bug here.  ArrayList<MessageViewerUser> --> friends
+	    }
+    }  
 
     public boolean blockUser(MessageViewerUser user){
         if (blocked.contains(user)){
-            throw BlockedUserException("This user is already blocked");
+            throw new BlockedUserException("This user is already blocked"); //added keyword new to create new class object for the exception
             return false;
         }
         blocked.add(user);
-        return blocked.contains(user);
+        return blocked.contains(user); //why are we making this method return a boolean?
     }
 
-    public boolean unblockUser(MessageViewerUser user){
+    public boolean unblockUser(MessageViewerUser user){ 
         if (blocked.contains(user)){
             blocked.remove(user);
             return blocked.contains(user);
         }else {
-	    throw BlockedUserException("This user is not blocked");
-            return false;
+	    throw new BlockedUserException("This user is not blocked"); //added keyword new to create new class object for the exception
+            return false; //I think if the exception is thrown this line doesnt get executed or smth? 
         }
     }
 
