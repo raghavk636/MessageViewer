@@ -179,9 +179,7 @@ public void saveFriendsToFriendsFile() {
     }
 
     //////////
-
-}
-// Messaging Methods
+    // Messaging Methods
     private MessageThread getMessageThread(MessageViewerUser otherUser) {
         synchronized (messageThreads) {
             for (MessageThread thread : messageThreads) {
@@ -221,4 +219,6 @@ public void saveFriendsToFriendsFile() {
             recipient.receivedMessages.add(message);
         }
     }
+}
+
 }
