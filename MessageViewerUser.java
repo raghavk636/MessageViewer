@@ -108,6 +108,10 @@ public class MessageViewerUser implements SocialMediaUser{
         return blocked;
     }
 
+//IMPORTANT
+
+    // setBlocked method doesnt remove the blockedFriends from the friends list right now 
+	
     public void setBlocked(ArrayList<MessageViewerUser> blockedFriends) {
         this.blocked = blockedFriends;
         saveBlockedToBlockedFile(); //running the saving method here to update the file
@@ -131,11 +135,17 @@ public class MessageViewerUser implements SocialMediaUser{
         saveFriendsToFriendsFile(); //saving after removing a friend
     }  
 
-   public boolean blockUser(MessageViewerUser user) throws BlockedUserException {
-        if (blocked.contains(user)){
+  public boolean blockUser(MessageViewerUser user) throws BlockedUserException {
+        if (blocked.contains(user)) {
             throw new BlockedUserException("This user is already blocked");
             //added keyword new to create new class object for the exception
         }
+
+        if (friends.contains(user)) {
+            friends.remove(user); // Remove user from friends list if they are friends
+            saveFriendsToFriendsFile(); // Update friends list file after removal
+        }
+
         blocked.add(user);
         saveBlockedToBlockedFile(); //saving here after blocking a user
         return blocked.contains(user); //why are we making this method return a boolean?
