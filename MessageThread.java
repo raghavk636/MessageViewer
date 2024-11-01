@@ -76,4 +76,13 @@ public class MessageThread {
         }
         return chatHistory.toString();
     }
+
+     public MessageViewerUser getUser1() {
+        return user1;
+
+    }
+
+    public MessageViewerUser getUser2() {
+        return user2;
+    }
 }
