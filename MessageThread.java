@@ -23,6 +23,12 @@ public class MessageThread {
 
         this.messages = loadMessagesFromFile(); // Load existing messages on startup
     }
+    public MessageViewerUser getUser1(){
+        return user1;
+    }
+    public MessageViewerUser getUser2(){
+        return user2;
+    }
 
     // Add message to the chat and save to file
 
