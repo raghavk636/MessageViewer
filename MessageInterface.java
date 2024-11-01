@@ -1,8 +1,8 @@
 public interface MessageInterface {
-    String getContent();
-    void getContent(String content);
-    SocialMediaUser getSender();
-    void getSender(String sender);
-    SocialMediaUser getReciver();
-    void getReceiver(String receiver);
+    public String getContent();
+    public void getContent(String content);
+    public SocialMediaUser getSender();
+    public void getSender(String sender);
+    public SocialMediaUser getReceiver();
+    public void getReceiver(String receiver);
 }
