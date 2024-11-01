@@ -262,6 +262,36 @@ public void saveFriendsToFriendsFile() {
     }
 }
 
+// method to view searched viewer's profile
+    public String userViewer(String searchedUsername) throws InvalidUsernameException {
+        MessageViewerUser user = searchUser(searchedUsername);
+        StringBuilder userInfo = new StringBuilder();
+
+        if (user == null) {
+            throw new InvalidUsernameException("username cannot be empty!");
+
+        } else if (blocked.contains(user)) {
+            // If the user is blocked, show limited information
+            userInfo.append("User is blocked.\n");
+            userInfo.append("Name: ").append(user.getName()).append("\n");
+            userInfo.append("Username: ").append(user.getUsername()).append("\n");
+        } else {
+            // Show detailed information if the user is not blocked
+            userInfo.append("Name: ").append(user.getName()).append("\n");
+            userInfo.append("Username: ").append(user.getUsername()).append("\n");
+          
+
+            if (friends.contains(user)) {
+                userInfo.append("Status: Friend");
+            } else {
+                userInfo.append("Status: Not a friend");
+            }
+        }
+        return userInfo.toString();
+    }
+
+
+
 
 
 }
