@@ -118,6 +118,9 @@ public class MessageViewerUser implements SocialMediaUser{
     }
 
      public void addFriend(MessageViewerUser friend){
+	if (blocked.contains(friend)){
+            throw new BlockedUserException("This user is blocked");
+        }     
         if(friends.contains(friend)){
             System.out.println("This user is already a friend!"); //message if friends is already in the friends arrayList
         } else {
@@ -260,7 +263,6 @@ public void saveFriendsToFriendsFile() {
             recipient.receivedMessages.add(message);
         }
     }
-}
 
 // method to view searched viewer's profile
     public String userViewer(String searchedUsername) throws InvalidUsernameException {
@@ -288,6 +290,21 @@ public void saveFriendsToFriendsFile() {
             }
         }
         return userInfo.toString();
+    }
+
+    // method to search for a user based on their username
+    public MessageViewerUser searchUser(String username) throws InvalidUsernameException {
+        for (MessageViewerUser user : currentUsers) {
+            if (user.getUsername().equals(username)) {
+                if (user.getBlocked().contains(this.getUsername())) {
+                    //checks if the user you are searching for has you blocked or not
+                    throw new InvalidUsernameException ("Please enter a valid username");
+                } else {
+                    return user;
+                }
+            }
+        }
+        throw new InvalidUsernameException ("Please enter a valid username");
     }
 
 
