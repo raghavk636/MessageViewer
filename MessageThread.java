@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 
-public class MessageThread {
+public class MessageThread implements MessageThreadInterface {
 
     //fields
 
