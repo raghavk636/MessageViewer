@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Message implements MessageInterface {
+public class Message implements MessageInterface, Serializable {
 
     // fields
 
@@ -23,6 +24,12 @@ public class Message implements MessageInterface {
         this.content = content;
 
     }
+
+    public Message(String content, MessageViewerUser sender) {
+        this.content = content;
+        this.sender = sender;
+    }
+
 
     //getter methods for Message objects
 
@@ -58,9 +65,11 @@ public class Message implements MessageInterface {
         this.receiver = receiver;
     }
 
- @Override
+
+    @Override
     public String toString() {
         return content; // Return the content of the message
     }
 
 }
+
