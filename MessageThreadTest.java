@@ -1,67 +1,111 @@
-import org.junit.jupiter.api.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.io.*;
-import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
-public class MessageThreadTest {
+public class MessageViewerUserTestCases {
+    private MessageViewerUser userA;
+    private MessageViewerUser userB;
 
-    private static final String USER1 = "Alice";
-    private static final String USER2 = "Bob";
-    private MessageThread messageThread;
-    private MessageViewerUser user1;
-    private MessageViewerUser user2;
-
-    @BeforeEach
+    // Creates test users
+    @Before
     public void setUp() {
-        user1 = new MessageViewerUser(USER1);
-        user2 = new MessageViewerUser(USER2);
-        messageThread = new MessageThread(user1, user2);
+        userA = new MessageViewerUser("UserA", "a123", "password");
+        userB = new MessageViewerUser("UserB", "b123", "password");
+    }
+
+    // Removes all the created files after the test is done
+    @After
+    public void clearAll() {
+        new File("friends_list_a123.dat").delete();
+        new File("blocked_list_a123.dat").delete();
+        new File("friends_list_b123.dat").delete();
+        new File("blocked_list_b123.dat").delete();
+        new File("current_users.dat").delete();
     }
 
     @Test
-    public void testAddMessage() {
-        String content = "Hello, Bob!";
-        messageThread.addMessage(content, user1);
-
-        // Verify that the message has been added
-        ArrayList<Message> messages = messageThread.loadMessagesFromFile();
-        assertEquals(1, messages.size());
-        assertEquals(content, messages.get(0).getContent());
-        assertEquals(USER1, messages.get(0).getSender());
+    public void testAddFriend() {
+        userA.addFriend(userB);
+        assertTrue(userA.getFriends().contains(userB));
     }
 
     @Test
-    public void testLoadMessagesFromFile() {
-        // Adding a message to simulate loading from file
-        messageThread.addMessage("Hello, Bob!", user1);
+    public void testRemoveFriend() {
+        userA.addFriend(userB);
+        userA.removeFriend(userB);
+        assertFalse(userA.getFriends().contains(userB));
+    }
 
-        // Create a new MessageThread instance to load messages
-        MessageThread newMessageThread = new MessageThread(user1, user2);
-        ArrayList<Message> messages = newMessageThread.loadMessagesFromFile();
-
-        assertEquals(1, messages.size());
-        assertEquals("Hello, Bob!", messages.get(0).getContent());
-        assertEquals(USER1, messages.get(0).getSender());
+    @Test(expected = BlockedUserException.class)
+    public void testBlockUserException() throws BlockedUserException {
+        userA.blockUser(userB);
+        userA.blockUser(userB);  // Attempt to block again should throw exception
     }
 
     @Test
-    public void testToString() {
-        messageThread.addMessage("Hello, Bob!", user1);
-        messageThread.addMessage("Hi, Alice!", user2);
+    public void testBlockUser() throws BlockedUserException {
+        userA.addFriend(userB);
+        userA.blockUser(userB);
 
-        String expectedOutput = "Message{content='Hello, Bob!', sender='Alice'}\n" +
-                                "Message{content='Hi, Alice!', sender='Bob'}\n";
-
-        assertEquals(expectedOutput, messageThread.toString());
+        assertTrue(userA.getBlocked().contains(userB));
+        assertFalse(userA.getFriends().contains(userB));  // Verify userB is removed from friends list
     }
 
-    @AfterEach
-    public void tearDown() {
-        // Clean up any files created during testing
-        File file = new File("chat_history_" + USER1 + "_" + USER2 + ".dat");
-        if (file.exists()) {
-            file.delete();
-        }
+    @Test(expected = BlockedUserException.class)
+    public void testUnblockUserException() throws BlockedUserException {
+        userA.unblockUser(userB);  // Attempt to unblock a non-blocked user should throw exception
+    }
+
+    @Test
+    public void testUnblockUser() throws BlockedUserException {
+        userA.blockUser(userB);
+        userA.unblockUser(userB);
+
+        assertFalse(userA.getBlocked().contains(userB));
+    }
+
+    @Test
+    public void testSendMessage() throws BlockedUserException {
+        userA.sendMessage(userB, "Hello, UserB!");
+        assertEquals("Hello, UserB!", userA.getSentMessages().get(0).getContent());
+        assertEquals("Hello, UserB!", userB.getReceivedMessages().get(0).getContent());
+    }
+
+    @Test(expected = BlockedUserException.class)
+    public void testSendMessageBlockedUser() throws BlockedUserException {
+        userA.blockUser(userB);
+        userB.sendMessage(userA, "Hello, UserA!");  // Should throw exception
+    }
+
+    @Test
+    public void testSearchUser() throws InvalidUsernameException {
+        assertEquals(userB, userA.searchUser("b123"));
+    }
+
+    @Test(expected = InvalidUsernameException.class)
+    public void testSearchInvalidUser() throws InvalidUsernameException {
+        userA.searchUser("nonexistentUser");  // Should throw exception
+    }
+
+    @Test(expected = InvalidUsernameException.class)
+    public void testSearchBlockedUser() throws InvalidUsernameException, BlockedUserException {
+        userB.blockUser(userA);
+        userA.searchUser("b123");  // Should throw exception because userA is blocked by userB
+    }
+
+    @Test
+    public void testUserViewer() throws InvalidUsernameException, BlockedUserException {
+        userA.addFriend(userB);
+        userB.blockUser(userA); // Added for the sake of completeness
+
+        String friendProfile = userA.userViewer("b123");
+        assertTrue(friendProfile.contains("Status: Friend"));
+
+        String blockedProfile = userB.userViewer("a123");
+        assertTrue(blockedProfile.contains("User is blocked"));
     }
 }
