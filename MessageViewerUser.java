@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 import java.util.ArrayList;
 
-public class MessageViewerUser implements SocialMediaUser{
+public class MessageViewerUser implements SocialMediaUser, Serializable {
 
     private String name;
     private String username;
@@ -14,13 +14,13 @@ public class MessageViewerUser implements SocialMediaUser{
     private final ArrayList<MessageThread> messageThreads = new ArrayList<>();
     private final String friendsFile;
     private final String blockedFile;
-	
-    private static ArrayList<MessageViewerUser> currentUsers = loadCurrentUsersFromFile(); //arraylist of current users
+
+    private static final ArrayList<MessageViewerUser> currentUsers = loadCurrentUsersFromFile(); //arraylist of current users
 
     private static final String currentUsersFile = "current_users.dat";
 
-//constructor 
-	
+//constructor
+
     public MessageViewerUser(String name, String username, String password) {
         this.name = name;
         this.username = username;
@@ -31,15 +31,15 @@ public class MessageViewerUser implements SocialMediaUser{
         this.blocked = loadBlockedFromBlockedFile();
     }
 
-	// Method to add a user to currentUsers list and save
-	
-    private void addUserToCurrentUsers(MessageViewerUser user) {
+    // Method to add a user to currentUsers list and save
+
+    public void addUserToCurrentUsers(MessageViewerUser user) {
         currentUsers.add(user);
         saveCurrentUsersToFile(); // Save updated list to file
     }
 
     // Method to save the currentUsers list to a file
-	
+
     private static void saveCurrentUsersToFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(currentUsersFile))) {
             oos.writeObject(currentUsers);
@@ -80,15 +80,15 @@ public class MessageViewerUser implements SocialMediaUser{
     public void setPassword(String password) {
         this.password = password;
     }
-	
+
     public List<Message> getSentMessages() {
         return new ArrayList<>(sentMessages);
     }
-    
+
     public List<Message> getReceivedMessages() {
         return new ArrayList<>(receivedMessages);
     }
-    
+
     public List<MessageThread> getMessageThreads() {
         return new ArrayList<>(messageThreads);
     }
@@ -110,17 +110,14 @@ public class MessageViewerUser implements SocialMediaUser{
 
 //IMPORTANT
 
-    // setBlocked method doesnt remove the blockedFriends from the friends list right now 
-	
+    // setBlocked method doesnt remove the blockedFriends from the friends list right now
+
     public void setBlocked(ArrayList<MessageViewerUser> blockedFriends) {
         this.blocked = blockedFriends;
         saveBlockedToBlockedFile(); //running the saving method here to update the file
     }
 
-     public void addFriend(MessageViewerUser friend){
-	if (blocked.contains(friend)){
-            throw new BlockedUserException("This user is blocked");
-        }     
+    public void addFriend(MessageViewerUser friend){
         if(friends.contains(friend)){
             System.out.println("This user is already a friend!"); //message if friends is already in the friends arrayList
         } else {
@@ -136,9 +133,9 @@ public class MessageViewerUser implements SocialMediaUser{
             friends.remove(friend); //fixed bug here.  ArrayList<MessageViewerUser> --> friends
         }
         saveFriendsToFriendsFile(); //saving after removing a friend
-    }  
+    }
 
-  public boolean blockUser(MessageViewerUser user) throws BlockedUserException {
+    public void blockUser(MessageViewerUser user) throws BlockedUserException {
         if (blocked.contains(user)) {
             throw new BlockedUserException("This user is already blocked");
             //added keyword new to create new class object for the exception
@@ -151,23 +148,21 @@ public class MessageViewerUser implements SocialMediaUser{
 
         blocked.add(user);
         saveBlockedToBlockedFile(); //saving here after blocking a user
-        return blocked.contains(user); //why are we making this method return a boolean?
     }
 
-   public boolean unblockUser(MessageViewerUser user) throws BlockedUserException{
+    public void unblockUser(MessageViewerUser user) throws BlockedUserException{
         if (blocked.contains(user)){
             blocked.remove(user);
             saveBlockedToBlockedFile(); //saving here after unblocking a user
-            return blocked.contains(user);
         }else {
             throw new BlockedUserException("This user is not blocked");
             //added keyword new to create new class object for the exception
         }
     }
 
-	//SAVING METHODS
+    //SAVING METHODS
 
-public void saveFriendsToFriendsFile() {
+    public void saveFriendsToFriendsFile() {
 
         //try with resources blcok
 
@@ -190,8 +185,8 @@ public void saveFriendsToFriendsFile() {
         }
 
     }
-	// LOADING METHODS 
-	
+    // LOADING METHODS
+
     public ArrayList<MessageViewerUser> loadFriendsFromFriendsFile(){
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(friendsFile))) {
@@ -212,7 +207,7 @@ public void saveFriendsToFriendsFile() {
         }
     }
 
-	// getter methods for the FriendsFile path and BlockedFile path
+    // getter methods for the FriendsFile path and BlockedFile path
 
     public String getFriendsFile() {
         return friendsFile;
@@ -224,7 +219,7 @@ public void saveFriendsToFriendsFile() {
 
     //////////
     // Messaging Methods
-    private MessageThread getMessageThread(MessageViewerUser otherUser) {
+    public MessageThread getMessageThread(MessageViewerUser otherUser) {
         synchronized (messageThreads) {
             for (MessageThread thread : messageThreads) {
                 if ((thread.getUser1().equals(this) && thread.getUser2().equals(otherUser)) ||
@@ -264,41 +259,14 @@ public void saveFriendsToFriendsFile() {
         }
     }
 
-// method to view searched viewer's profile
-    public String userViewer(String searchedUsername) throws InvalidUsernameException {
-        MessageViewerUser user = searchUser(searchedUsername);
-        StringBuilder userInfo = new StringBuilder();
-
-        if (user == null) {
-            throw new InvalidUsernameException("username cannot be empty!");
-
-        } else if (blocked.contains(user)) {
-            // If the user is blocked, show limited information
-            userInfo.append("User is blocked.\n");
-            userInfo.append("Name: ").append(user.getName()).append("\n");
-            userInfo.append("Username: ").append(user.getUsername()).append("\n");
-        } else {
-            // Show detailed information if the user is not blocked
-            userInfo.append("Name: ").append(user.getName()).append("\n");
-            userInfo.append("Username: ").append(user.getUsername()).append("\n");
-          
-
-            if (friends.contains(user)) {
-                userInfo.append("Status: Friend");
-            } else {
-                userInfo.append("Status: Not a friend");
-            }
-        }
-        return userInfo.toString();
-    }
 
     // method to search for a user based on their username
     public MessageViewerUser searchUser(String username) throws InvalidUsernameException {
         for (MessageViewerUser user : currentUsers) {
             if (user.getUsername().equals(username)) {
-                if (user.getBlocked().contains(this.getUsername())) {
+                if (user.getBlocked().contains(this)) {
                     //checks if the user you are searching for has you blocked or not
-                    throw new InvalidUsernameException ("Please enter a valid username");
+                    throw new InvalidUsernameException ("You cannot search for this user as they have blocked you.");
                 } else {
                     return user;
                 }
@@ -308,7 +276,46 @@ public void saveFriendsToFriendsFile() {
     }
 
 
+// method to view searched viewer's profile
+public String userViewer(String searchedUsername) throws InvalidUsernameException {
+    MessageViewerUser user = searchUser(searchedUsername);
+    StringBuilder userInfo = new StringBuilder();
 
+    if (user == null) {
+        throw new InvalidUsernameException("username cannot be empty!");
+
+    } else if (blocked.contains(user)) {
+        // If the user is blocked, show limited information
+        userInfo.append("User is blocked.\n");
+        userInfo.append("Name: ").append(user.getName()).append("\n");
+        userInfo.append("Username: ").append(user.getUsername()).append("\n");
+    } else {
+        // Show detailed information if the user is not blocked
+        userInfo.append("Name: ").append(user.getName()).append("\n");
+        userInfo.append("Username: ").append(user.getUsername()).append("\n");
+
+
+        if (friends.contains(user)) {
+            userInfo.append("Status: Friend");
+        } else {
+            userInfo.append("Status: Not a friend");
+        }
+    }
+    return userInfo.toString();
+}
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        MessageViewerUser that = (MessageViewerUser) obj;
+        return username.equals(that.username); // username uniquely identifies a user
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username);
+    }
 
 
 }
