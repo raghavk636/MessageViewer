@@ -39,7 +39,7 @@ public class MessageThreadTest {
         ArrayList<Message> loadedMessages = messageThread.loadMessagesFromFile();
         assertEquals(1, loadedMessages.size());
         assertEquals("Hello, B!", loadedMessages.get(0).getContent());
-       
+
     }
 
     @Test
