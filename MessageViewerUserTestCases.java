@@ -90,6 +90,10 @@ public class MessageViewerUserTestCases {
 
     @Test
     public void testSearchUser() throws InvalidUsernameException {
+        // Ensure user2 is added to currentUsers
+        user1.addUserToCurrentUsers(user1);
+        user1.addUserToCurrentUsers(user2);
+
         assertEquals(user2, user1.searchUser("B123"));
     }
 
@@ -108,14 +112,14 @@ public class MessageViewerUserTestCases {
     @Test
     public void testUserViewer() throws InvalidUsernameException, BlockedUserException {
         user1.addFriend(user2);
-        user1.blockUser(user3);
+
 
         String friendProfile = user1.userViewer("B123");
         assertTrue(friendProfile.contains("Status: Friend"));
+
+        user1.blockUser(user2);
 
         String blockedProfile = user1.userViewer("B123");
         assertTrue(blockedProfile.contains("User is blocked"));
     }
 }
-
-
