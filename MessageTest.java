@@ -22,7 +22,7 @@ public class MessageTest {
     }
 
 
-    //method to rest everything after each test 
+    //method to rest everything after each test
     @After
     public void clearAll() {
         // Set variables to null to ensure a clean state for each test
