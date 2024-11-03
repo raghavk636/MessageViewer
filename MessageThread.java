@@ -91,4 +91,8 @@ public class MessageThread implements MessageThreadInterface {
     public MessageViewerUser getUser2() {
         return user2;
     }
+
+     public String getFilePath() {
+        return filePath;
+    }
 }
