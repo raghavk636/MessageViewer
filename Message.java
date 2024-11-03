@@ -58,4 +58,9 @@ public class Message implements MessageInterface {
         this.receiver = receiver;
     }
 
+ @Override
+    public String toString() {
+        return content; // Return the content of the message
+    }
+
 }
