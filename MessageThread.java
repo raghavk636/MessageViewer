@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
 
-public class MessageThread implements MessageThreadInterface {
+public class MessageThread implements MessageThreadInterface, Serializable {
 
     //fields
 
@@ -22,12 +22,6 @@ public class MessageThread implements MessageThreadInterface {
 
 
         this.messages = loadMessagesFromFile(); // Load existing messages on startup
-    }
-    public MessageViewerUser getUser1(){
-        return user1;
-    }
-    public MessageViewerUser getUser2(){
-        return user2;
     }
 
     // Add message to the chat and save to file
@@ -83,7 +77,7 @@ public class MessageThread implements MessageThreadInterface {
         return chatHistory.toString();
     }
 
-     public MessageViewerUser getUser1() {
+    public MessageViewerUser getUser1() {
         return user1;
 
     }
@@ -92,7 +86,11 @@ public class MessageThread implements MessageThreadInterface {
         return user2;
     }
 
-     public String getFilePath() {
+    public String getFilePath() {
         return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }
