@@ -16,21 +16,21 @@ public class MessageViewerUserTestCases {
     //creates test users
     @Before
     public void setUp() {
-        user1 = new MessageViewerUser("Alice", "alice123", "password1");
-        user2 = new MessageViewerUser("Bob", "bob456", "password2");
-        user3 = new MessageViewerUser("Charlie", "charlie789", "password3");
+        user1 = new MessageViewerUser("UserA", "A123", "password1");
+        user2 = new MessageViewerUser("UserB", "B123", "password2");
+        user3 = new MessageViewerUser("UserC", "C123", "password3");
     }
 
 
     //Removes all the created files after the test is done
     @After
     public void clearAll() {
-        new File("friends_list_alice123.dat").delete();
-        new File("blocked_list_alice123.dat").delete();
-        new File("friends_list_bob456.dat").delete();
-        new File("blocked_list_bob456.dat").delete();
-        new File("friends_list_charlie789.dat").delete();
-        new File("blocked_list_charlie789.dat").delete();
+        new File("friends_list_A123.dat").delete();
+        new File("blocked_list_A123.dat").delete();
+        new File("friends_list_B123.dat").delete();
+        new File("blocked_list_B123.dat").delete();
+        new File("friends_list_C123.dat").delete();
+        new File("blocked_list_C123.dat").delete();
         new File("current_users.dat").delete();
     }
 
@@ -77,20 +77,20 @@ public class MessageViewerUserTestCases {
 
     @Test
     public void testSendMessage() throws BlockedUserException {
-        user1.sendMessage(user2, "Hello, Bob!");
-        assertEquals("Hello, Bob!", user1.getSentMessages().get(0).getContent());
-        assertEquals("Hello, Bob!", user2.getReceivedMessages().get(0).getContent());
+        user1.sendMessage(user2, "Hello, B!");
+        assertEquals("Hello, B!", user1.getSentMessages().get(0).getContent());
+        assertEquals("Hello, B!", user2.getReceivedMessages().get(0).getContent());
     }
 
     @Test(expected = BlockedUserException.class)
     public void testSendMessageBlockedUser() throws BlockedUserException {
         user1.blockUser(user2);
-        user2.sendMessage(user1, "Hello, Alice!");  // Should throw exception
+        user2.sendMessage(user1, "Hello, A!");  // Should throw exception
     }
 
     @Test
     public void testSearchUser() throws InvalidUsernameException {
-        assertEquals(user2, user1.searchUser("bob456"));
+        assertEquals(user2, user1.searchUser("B123"));
     }
 
     @Test(expected = InvalidUsernameException.class)
@@ -102,7 +102,7 @@ public class MessageViewerUserTestCases {
     public void testSearchBlockedUser() throws InvalidUsernameException, BlockedUserException {
 
         user2.blockUser(user1);
-        user1.searchUser("bob456");  // Should throw exception because user1 is blocked by user2
+        user1.searchUser("B123");  // Should throw exception because user1 is blocked by user2
     }
 
     @Test
@@ -110,10 +110,12 @@ public class MessageViewerUserTestCases {
         user1.addFriend(user2);
         user1.blockUser(user3);
 
-        String friendProfile = user1.userViewer("bob456");
+        String friendProfile = user1.userViewer("B123");
         assertTrue(friendProfile.contains("Status: Friend"));
 
-        String blockedProfile = user1.userViewer("charlie789");
+        String blockedProfile = user1.userViewer("B123");
         assertTrue(blockedProfile.contains("User is blocked"));
     }
 }
+
+
