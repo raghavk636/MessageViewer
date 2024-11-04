@@ -2,6 +2,17 @@ import java.io.*;
 import java.util.*;
 import java.util.ArrayList;
 
+/**
+ * MessageViewerUser - A class that implements the SocialMediaUser interface,
+ * representing a user in the MessageViewer social media application. 
+ * This class manages user information, friend and blocked user lists, 
+ * message sending and receiving functionality, and user search capabilities.
+ * It also handles the serialization of current users, friends, and blocked lists 
+ * to maintain persistent data storage.
+ *  
+ * @version November 3, 2024
+ * @author L10-Team 1
+ */
 public class MessageViewerUser implements SocialMediaUser, Serializable {
 
     private String name;
