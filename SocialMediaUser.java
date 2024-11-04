@@ -1,5 +1,13 @@
 import java.util.List;
 
+
+/**
+ * SocialMediaUser - An interface representing a user in the social media application,
+ * defining essential user functionalities such as friend management, messaging, and profile viewing.
+ * 
+ * @author L10-Team 1
+ * @version November 3, 2024
+ */
 public interface SocialMediaUser {
 
     // Basic user information
