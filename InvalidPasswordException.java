@@ -1,7 +1,7 @@
 /**
  * InvalidPasswordException - A custom exception thrown when an invalid password is provided during a user authentication attempt.
  *
- * @see Exception
+ * @author L10-Team 1
  * @version November 3, 2024
  */
 public class InvalidPasswordException extends Exception{
