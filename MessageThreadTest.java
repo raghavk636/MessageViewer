@@ -7,6 +7,14 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * MessageThreadTest - A test class for verifying the functionality of the MessageThread class.
+ * This class includes tests for adding messages, saving and loading messages from a file,
+ * and ensuring the correct behavior of user retrieval methods.
+ *  
+ * @version November 3, 2024
+ * @author L10-Team 1
+ */
 public class MessageThreadTest {
 
     private MessageViewerUser user1;
