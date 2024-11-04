@@ -4,6 +4,13 @@ import org.junit.After;
 
 import static org.junit.Assert.*;
 
+/**
+ * MessageTest - A test class for the {@link Message} class, verifying its constructors, 
+ * getters, and setters.
+ * 
+ * @author L10-Team 1  
+ * @version November 3, 2024
+ */
 public class MessageTest {
 
     private MessageViewerUser sender;
