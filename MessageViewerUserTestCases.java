@@ -7,6 +7,13 @@ import java.io.*;
 import static org.junit.Assert.*;
 
 
+/**
+ * MessageViewerUser - Represents a user in the Message Viewer application, allowing for friend management,
+ * messaging, and user interaction features.
+ * 
+ * @author L10-Team 1
+ * @version November 3, 2024
+ */
 public class MessageViewerUserTestCases {
     private MessageViewerUser user1;
     private MessageViewerUser user2;
