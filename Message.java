@@ -1,6 +1,12 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Message - Represents a message exchanged between users, containing content, sender, and receiver details.
+ *
+ * @author L10-Team 1
+ * @version November 3, 2024
+ */
 public class Message implements MessageInterface, Serializable {
 
     // fields
