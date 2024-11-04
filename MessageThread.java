@@ -1,6 +1,13 @@
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * MessageThread - Manages a conversation thread between two users, allowing messages to be
+ * added, saved, and loaded from a file. Each thread has a unique file path for chat history storage.
+ *  
+ * @version November 3, 2024
+ * @author L10-Team 1
+ */
 public class MessageThread implements MessageThreadInterface, Serializable {
 
     //fields
