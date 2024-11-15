@@ -1,5 +1,5 @@
 import java.util.*;
-public class ClientGUI {
+public class ClientGUI implements ClientInterface {
 	
 	public static int startScreen() {
 		Scanner keyboard = new Scanner(System.in);
@@ -109,7 +109,7 @@ public class ClientGUI {
 					break;
 				case 3:
 					System.out.println("Thank you for using Message Viewer!");
-					again = false;
+					homeAgain = false;
 					break;
 			}
 		}
