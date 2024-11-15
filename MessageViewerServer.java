@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class MessageViewerServer {
+public class MessageViewerServer implements ServerInterface {
     private static final int PORT = 12345;  // Port for the server to listen on
     private static final String USERS_FILE = "current_users.dat";  // File to store all current users
     private static final ArrayList<MessageViewerUser> currentUsers = loadUsersFromFile();  // Load all current users
