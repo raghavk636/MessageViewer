@@ -1,3 +1,4 @@
+import java.util.*;
 /**
  * The ClientGUI class provides a console-based interface for interacting with a 
  * messaging server. Users can log in, create accounts, and perform various actions 
@@ -20,7 +21,7 @@
  * @author L10-Team 1
  * @version November 16, 2024
  */
-import java.util.*;
+
 public class ClientGUI implements ClientInterface {
 	
 	public static int startScreen() {
