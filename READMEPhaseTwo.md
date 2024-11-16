@@ -1,4 +1,4 @@
-##MessageViewer Phase Two
+## MessageViewer Phase Two
 Welcome to the MessageViewer direct messaging app. Our app allows viewers to send and recieve messages to any number of friends! Within this phase we have developed a server that supports multiple clients at once in a thread safe server so that each client's profile information and message history are kept secure. The ClientGUI simulates a client-side interface for a direct messaging application, allowing users to log in to their accounts, create new accounts, interact with the server to manage messages and friendships. 
 
  ## Main Screen
