@@ -17,8 +17,8 @@
  * </ul>
  * </p>
  *
- * @author
- * @version 1.0
+ * @author L10-Team 1
+ * @version November 16, 2024
  */
 import java.util.*;
 public class ClientGUI implements ClientInterface {
