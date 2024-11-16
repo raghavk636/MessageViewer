@@ -1,22 +1,12 @@
 import java.util.*;
 /**
- * The ClientGUI class provides a console-based interface for interacting with a 
+ * The ClientGUI class provides an interface for interacting with a 
  * messaging server. Users can log in, create accounts, and perform various actions 
  * such as searching messages, managing friends, and signing out. 
  *
  * This class is part of a client-server messaging application and is intended to 
  * send user inputs to the server for processing. The implementation includes menus 
  * for navigation and placeholders for server communication.
- *
- * Features include:
- * <ul>
- *   <li>Log In functionality</li>
- *   <li>Account creation</li>
- *   <li>Friend management (add, remove, block)</li>
- *   <li>Message searching</li>
- *   <li>Sign out functionality</li>
- * </ul>
- * </p>
  *
  * @author L10-Team 1
  * @version November 16, 2024
