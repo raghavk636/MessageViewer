@@ -49,37 +49,6 @@ public class MessageViewerServer implements ServerInterface {
         }
     }
 
-    // This method authenticates a user by checking their username and password
-    public static MessageViewerUser authenticateUser(String username, String password) {
-        Scanner scanner = new Scanner(System.in);
-        int attempts = 0;
-        final int MAX_ATTEMPTS = 5;
-
-        // Loop to allow 5 attempts for correct username and password
-        while (attempts < MAX_ATTEMPTS) {
-            // Search for the user in the list of current users
-            for (MessageViewerUser user : currentUsers) {
-                if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                    // Successful authentication
-                    System.out.println("Login successful!");
-                    return user; // Return the authenticated user
-                }
-            }
-
-            // If not authenticated, increment attempts and ask the user to re-enter credentials
-            attempts++;
-            if (attempts < MAX_ATTEMPTS) {
-                System.out.print("Please enter your username: ");
-                username = scanner.nextLine();  // Prompt for username again
-                System.out.print("Please enter your password: ");
-                password = scanner.nextLine();  // Prompt for password again
-            }
-        }
-
-        // If the loop ends, the user has failed 5 attempts
-        System.out.println("You have exceeded the maximum number of attempts. Please try again later.");
-        return null;  // Return null if authentication fails after 5 attempts
-    }
 
     // This class handles each individual client connection and implements Runnable
     static class ClientHandler implements Runnable {
@@ -104,6 +73,8 @@ public class MessageViewerServer implements ServerInterface {
                 // 1. Handle user login
                 String username = (String) in.readObject();
                 String password = (String) in.readObject();
+                System.out.println("username: " + username);
+                System.out.println("password: " + password);
 
                 currentUser = authenticateUser(username, password);
 
@@ -120,7 +91,9 @@ public class MessageViewerServer implements ServerInterface {
                 while (true) {
                     String command = (String) in.readObject();
 
-                    if (command.equals("SEND_MESSAGE")) {
+                    if (command.equals("CREATE_ACCOUNT")) {
+                        handleCreateAccount();
+                    } else if (command.equals("SEND_MESSAGE")) {
                         handleSendMessage();
                     } else if (command.equals("ADD_FRIEND")) {
                         handleAddFriend();
@@ -149,6 +122,10 @@ public class MessageViewerServer implements ServerInterface {
                 e.printStackTrace();
             }
         }
+
+
+
+        ///GOOD CODE BELOW
 
         // Handle sending a message from currentUser to another user
         private void handleSendMessage() throws IOException, ClassNotFoundException {
@@ -251,7 +228,66 @@ public class MessageViewerServer implements ServerInterface {
             }
         }
 
+        // This method authenticates a user by checking their username and password
+        public static MessageViewerUser authenticateUser(String username, String password) {
+            Scanner scanner = new Scanner(System.in);
+            int attempts = 0;
+            final int MAX_ATTEMPTS = 5;
 
+            // Loop to allow 5 attempts for correct username and password
+            while (attempts < MAX_ATTEMPTS) {
+                // Search for the user in the list of current users
+                for (MessageViewerUser user : currentUsers) {
+                    if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                        // Successful authentication
+                        System.out.println("Login successful!");
+                        return user; // Return the authenticated user
+                    }
+                }
+
+                // If not authenticated, increment attempts and ask the user to re-enter credentials
+                attempts++;
+                if (attempts < MAX_ATTEMPTS) {
+                    System.out.print("Please enter your username: ");
+                    username = scanner.nextLine();  // Prompt for username again
+                    System.out.print("Please enter your password: ");
+                    password = scanner.nextLine();  // Prompt for password again
+                }
+            }
+
+            // If the loop ends, the user has failed 5 attempts
+            System.out.println("You have exceeded the maximum number of attempts. Please try again later.");
+            return null;  // Return null if authentication fails after 5 attempts
+        }
+
+        // Handle creating a new account
+        private void handleCreateAccount() throws IOException, ClassNotFoundException {
+
+            String name = (String) in.readObject();
+
+            out.writeObject("Enter a new username:");
+            String username = (String) in.readObject();
+
+            out.writeObject("Enter a new password:");
+            String password = (String) in.readObject();
+
+            synchronized (currentUsers) { // Ensure thread safety
+                if (findUserByUsername(username) != null) {
+                    out.writeObject("Username already exists. Please choose another.");
+                } else {
+                    // Create new user and add to the list
+                    MessageViewerUser newUser = new MessageViewerUser(name, username, password);
+                    currentUsers.add(newUser);
+
+                    // Save users to the file
+                    saveUsersToFile();
+
+                    out.writeObject("Account created successfully. You can now log in.");
+                }
+            }
+        }
+
+        //HELPER METHOD
 
         // Helper method to find a user by their username
         private MessageViewerUser findUserByUsername(String username) {
@@ -266,3 +302,4 @@ public class MessageViewerServer implements ServerInterface {
 
 
 }
+
