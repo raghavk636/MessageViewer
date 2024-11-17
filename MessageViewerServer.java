@@ -1,7 +1,13 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
+/**
+ * The MessageViewerServer class is a server created for managing
+ * user authentication, messaging, and user interactions. It uses sockets to
+ * handle client-server communication and saves user data to a file.
+ @author L10-Team 1
+ @version November 16th 2024
+ */
 public class MessageViewerServer implements ServerInterface {
     private static final int PORT = 12345;  // Port for the server to listen on
     private static final String USERS_FILE = "current_users.dat";  // File to store all current users
