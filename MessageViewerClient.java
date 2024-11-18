@@ -1,7 +1,19 @@
 import java.io.*;
 import java.net.*;
 import java.util.Scanner;
-
+/**
+ * The MessageViewerClient class provides a command-line interface
+ * for a user to interact with a server-based messaging system. 
+ * Users can log in, create accounts, send messages, manage friends, and block or unblock users.
+ * 
+ * This client communicates with a server using sockets and serializes data via 
+ * ObjectOutputStream and ObjectInputStream.
+ * 
+ *
+ * 
+ * @author L10- Team 1
+ * @version November 17, 2024
+ */
 public class MessageViewerClient implements PortInformationInterface{
 
     public static void main(String[] args) {
