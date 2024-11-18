@@ -3,7 +3,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 import java.util.*;
-
+/**
+* This test class verifies the functionality of the server methods, including user authentication,
+* file-based user persistence, and handling of edge cases such as missing or invalid data files.
+*
+* @author L10-Team1
+* @version November 17, 2024
+* 
+*/
 class MessageViewerServerTest {
 
     private MessageViewerServer server;
