@@ -89,14 +89,14 @@ public class UserMessage {
 
         /// THIS !!!!!!
 
-//        messagesInThread = new JPanel(new BoxLayout(messagesInThread, BoxLayout.Y_AXIS));
+        messagesInThread = new JPanel(new BoxLayout(messagesInThread, BoxLayout.Y_AXIS));
 
-//        for (Message m : messageThread) {
-//            header.add(Box.createVerticalStrut(7));
-//            header.add(new MessageUI3(m.getSender().getUsername(),m.getReceiver().getUsername(),m.getDate(),m.getContent()));
-//        }
-//
-//
+        for (Message m : messageThread) {
+            header.add(Box.createVerticalStrut(7));
+            header.add(new MessageUI3(m.getSender().getUsername(),m.getReceiver().getUsername(),m.getDate(),m.getContent()));
+        }
+
+
 
         //add panel to the frame
         //header.add(new JScrollPane(table), BorderLayout.EAST);
