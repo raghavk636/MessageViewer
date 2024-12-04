@@ -1,14 +1,19 @@
+import model.BlockedUserException;
+import model.InvalidUsernameException;
+import model.Message;
+import model.MessageViewerUser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
 
 /**
- * MessageViewerUser - Represents a user in the Message Viewer application, allowing for friend management,
+ * model.MessageViewerUser - Represents a user in the model.Message Viewer application, allowing for friend management,
  * messaging, and user interaction features.
  * 
  * @author L10-Team 1
@@ -26,6 +31,11 @@ public class MessageViewerUserTestCases {
         user1 = new MessageViewerUser("UserA", "A123", "password1");
         user2 = new MessageViewerUser("UserB", "B123", "password2");
         user3 = new MessageViewerUser("UserC", "C123", "password3");
+//        user1.addUserToCurrentUsers(user2);
+//        user1.addUserToCurrentUsers(user3);
+//        user2.addUserToCurrentUsers(user1);
+//        user2.addUserToCurrentUsers(user3);
+//        user3.addUserToCurrentUsers(user1);
     }
 
 
@@ -53,6 +63,18 @@ public class MessageViewerUserTestCases {
         user1.removeFriend(user2);
         assertFalse(user1.getFriends().contains(user2));
     }
+    @Test
+    public void testSendMessage() throws BlockedUserException {
+        user1.sendMessage(user2, "Hello, B!");
+        assertEquals("Hello, B!", user1.getSentMessages().get(0).getContent());
+        assertEquals("Hello, B!", user2.getReceivedMessages().get(0).getContent());
+//        user2.sendMessage(user1, "Hello, A!");
+//        user2.sendMessage(user3, "Hello, C!");
+//        Map<String, Message> allMessages = user2.allSentAndReceivedMessages();
+//        assertEquals(2, allMessages.size());
+//        assertEquals("Hello, A!", allMessages.get("A123").getContent());
+    }
+
 
     @Test(expected = BlockedUserException.class)
     public void testBlockUserException() throws BlockedUserException {
@@ -82,12 +104,7 @@ public class MessageViewerUserTestCases {
         assertFalse(user1.getBlocked().contains(user2));
     }
 
-    @Test
-    public void testSendMessage() throws BlockedUserException {
-        user1.sendMessage(user2, "Hello, B!");
-        assertEquals("Hello, B!", user1.getSentMessages().get(0).getContent());
-        assertEquals("Hello, B!", user2.getReceivedMessages().get(0).getContent());
-    }
+
 
     @Test(expected = BlockedUserException.class)
     public void testSendMessageBlockedUser() throws BlockedUserException {
@@ -98,8 +115,8 @@ public class MessageViewerUserTestCases {
     @Test
     public void testSearchUser() throws InvalidUsernameException {
         // Ensure user2 is added to currentUsers
-        user1.addUserToCurrentUsers(user1);
-        user1.addUserToCurrentUsers(user2);
+//        user1.addUserToCurrentUsers(user1);
+//        user1.addUserToCurrentUsers(user2);
 
         assertEquals(user2, user1.searchUser("B123"));
     }

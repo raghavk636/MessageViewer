@@ -1,3 +1,6 @@
+import model.BlockedUserException;
+import model.MessageViewerUser;
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -11,7 +14,7 @@ import java.util.*;
 public class MessageViewerServer implements ServerInterface {
     private static final int PORT = 12345;  // Port for the server to listen on
     private static final String USERS_FILE = "current_users.dat";  // File to store all current users
-    private static final ArrayList<MessageViewerUser> currentUsers = loadUsersFromFile();  // Load all current users
+    public static final ArrayList<MessageViewerUser> currentUsers = loadUsersFromFile();  // Load all current users
 
     public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
@@ -70,29 +73,13 @@ public class MessageViewerServer implements ServerInterface {
         @Override
         public void run() {
             try {
-                // 1. Handle user login
-                String username = (String) in.readObject();
-                String password = (String) in.readObject();
-                System.out.println("username: " + username);
-                System.out.println("password: " + password);
-
-                currentUser = authenticateUser(username, password);
-
-                if (currentUser == null) {
-                    out.writeObject("Invalid credentials, login failed.");
-                    clientSocket.close();
-                    return;
-                }
-
-                // 2. Send confirmation of login
-                out.writeObject("Login successful. Welcome, " + currentUser.getName());
-
-                // 3. Handle different client commands (sending messages, adding/removing friends, etc.)
                 while (true) {
                     String command = (String) in.readObject();
 
                     if (command.equals("CREATE_ACCOUNT")) {
                         handleCreateAccount();
+                    } else if (command.equals("LOGIN_ACCOUNT")) {
+                        handleLogin();
                     } else if (command.equals("SEND_MESSAGE")) {
                         handleSendMessage();
                     } else if (command.equals("ADD_FRIEND")) {
@@ -108,6 +95,7 @@ public class MessageViewerServer implements ServerInterface {
                     } else if (command.equals("VIEW_BLOCKED")) {
                         handleViewBlocked();
                     } else if (command.equals("LOGOUT")) {
+                        currentUser = null;
                         out.writeObject("Logging out...");
                         break;
                     } else {
@@ -135,6 +123,7 @@ public class MessageViewerServer implements ServerInterface {
             MessageViewerUser recipient = findUserByUsername(recipientUsername);
             if (recipient != null) {
                 try {
+                    System.out.println("Sending message to " + recipient + "--message:" + content);
                     currentUser.sendMessage(recipient, content);
                     out.writeObject("Message sent successfully.");
                 } catch (BlockedUserException e) {
@@ -179,7 +168,7 @@ public class MessageViewerServer implements ServerInterface {
                 currentUser.addFriend(friend);
                 out.writeObject("Friend added successfully.");
             } else {
-                out.writeObject("User not found.");
+                out.writeObject("false");
             }
         }
 
@@ -228,6 +217,19 @@ public class MessageViewerServer implements ServerInterface {
             }
         }
 
+        /*
+        return user if found
+         */
+        public static MessageViewerUser getAuthenticatedUser(String username, String password) {
+            for (MessageViewerUser user : currentUsers) {
+                if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                    // Successful authentication
+                    System.out.println("Login successful!");
+                    return user; // Return the authenticated user
+                }
+            }
+            return null;
+        }
         // This method authenticates a user by checking their username and password
         public static MessageViewerUser authenticateUser(String username, String password) {
             Scanner scanner = new Scanner(System.in);
@@ -235,23 +237,29 @@ public class MessageViewerServer implements ServerInterface {
             final int MAX_ATTEMPTS = 5;
 
             // Loop to allow 5 attempts for correct username and password
-            while (attempts < MAX_ATTEMPTS) {
-                // Search for the user in the list of current users
-                for (MessageViewerUser user : currentUsers) {
-                    if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                        // Successful authentication
-                        System.out.println("Login successful!");
-                        return user; // Return the authenticated user
-                    }
-                }
 
-                // If not authenticated, increment attempts and ask the user to re-enter credentials
-                attempts++;
-                if (attempts < MAX_ATTEMPTS) {
-                    System.out.print("Please enter your username: ");
-                    username = scanner.nextLine();  // Prompt for username again
-                    System.out.print("Please enter your password: ");
-                    password = scanner.nextLine();  // Prompt for password again
+            boolean authenticated = false;
+
+            while (!authenticated) {
+                while (attempts < MAX_ATTEMPTS) {
+                    // Search for the user in the list of current users
+                    for (MessageViewerUser user : currentUsers) {
+                        if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                            // Successful authentication
+                            System.out.println("Login successful!");
+                            authenticated = true;
+                            return user; // Return the authenticated user
+                        }
+                    }
+
+                    // If not authenticated, increment attempts and ask the user to re-enter credentials
+                    attempts++;
+                    if (attempts < MAX_ATTEMPTS) {
+                        System.out.print("Please enter your username: ");
+                        username = scanner.nextLine();  // Prompt for username again
+                        System.out.print("Please enter your password: ");
+                        password = scanner.nextLine();  // Prompt for password again
+                    }
                 }
             }
 
@@ -264,11 +272,7 @@ public class MessageViewerServer implements ServerInterface {
         private void handleCreateAccount() throws IOException, ClassNotFoundException {
 
             String name = (String) in.readObject();
-
-            out.writeObject("Enter a new username:");
             String username = (String) in.readObject();
-
-            out.writeObject("Enter a new password:");
             String password = (String) in.readObject();
 
             synchronized (currentUsers) { // Ensure thread safety
@@ -282,9 +286,32 @@ public class MessageViewerServer implements ServerInterface {
                     // Save users to the file
                     saveUsersToFile();
 
-                    out.writeObject("Account created successfully. You can now log in.");
+                    out.writeObject("true");
+
                 }
             }
+        }
+
+        private void handleLogin() throws IOException, ClassNotFoundException {
+
+            // 1. Handle user login
+            String username = (String) in.readObject();
+            String password = (String) in.readObject();
+
+            //testing
+            System.out.println("username: " + username);
+            System.out.println("password: " + password);
+
+            currentUser = getAuthenticatedUser(username, password);
+
+            if (currentUser == null) {
+                out.writeObject("null");
+//                clientSocket.close();
+                return;
+            }
+
+            // 2. Send confirmation of login
+            out.writeObject(currentUser.getUsername());
         }
 
         //HELPER METHOD

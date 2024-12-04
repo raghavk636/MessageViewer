@@ -1,5 +1,7 @@
+package model;
+
 /**
- * BlockedUserException - A custom exception thrown when an action is attempted on a user who is blocked.
+ * model.BlockedUserException - A custom exception thrown when an action is attempted on a user who is blocked.
  *  
  * @author L10-Team 1
  * @version November 3, 2024

@@ -1,3 +1,6 @@
+import model.Message;
+import model.MessageThread;
+import model.MessageViewerUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +11,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * MessageThreadTest - A test class for verifying the functionality of the MessageThread class.
+ * MessageThreadTest - A test class for verifying the functionality of the model.MessageThread class.
  * This class includes tests for adding messages, saving and loading messages from a file,
  * and ensuring the correct behavior of user retrieval methods.
  *  
@@ -63,7 +66,7 @@ public class MessageThreadTest {
         messageThread.addMessage("Hello, B!", user1);
         messageThread.addMessage("Hi, A!", user2);
 
-        // Create a new MessageThread instance to simulate restarting the application
+        // Create a new model.MessageThread instance to simulate restarting the application
         MessageThread newThread = new MessageThread(user1, user2);
         ArrayList<Message> loadedMessages = newThread.loadMessagesFromFile();
 
@@ -103,11 +106,11 @@ public class MessageThreadTest {
 
     @Test
     public void testSaveMessagesToFileAndReload() {
-        // Test that messages persist even after reloading the MessageThread
+        // Test that messages persist even after reloading the model.MessageThread
         messageThread.addMessage("This is a test message", user1);
         messageThread.saveMessagesToFile();
 
-        // Recreate the MessageThread to simulate reloading
+        // Recreate the model.MessageThread to simulate reloading
         MessageThread reloadedThread = new MessageThread(user1, user2);
         ArrayList<Message> reloadedMessages = reloadedThread.loadMessagesFromFile();
 

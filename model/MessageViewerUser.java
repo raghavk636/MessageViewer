@@ -1,9 +1,11 @@
+package model;
+
 import java.io.*;
 import java.util.*;
 import java.util.ArrayList;
 
 /**
- * MessageViewerUser - A class that implements the SocialMediaUser interface,
+ * model.MessageViewerUser - A class that implements the model.SocialMediaUser interface,
  * representing a user in the MessageViewer social media application.
  * This class manages user information, friend and blocked user lists,
  * message sending and receiving functionality, and user search capabilities.
@@ -20,16 +22,17 @@ public class MessageViewerUser implements SocialMediaUser, Serializable {
     private String password;
     private ArrayList<MessageViewerUser> friends;
     private ArrayList<MessageViewerUser> blocked;
-    private final ArrayList<Message> sentMessages = new ArrayList<>();
-    private final ArrayList<Message> receivedMessages = new ArrayList<>();
+    private ArrayList<Message> sentMessages = new ArrayList<>();
+    private ArrayList<Message> receivedMessages = new ArrayList<>();
     private final ArrayList<MessageThread> messageThreads = new ArrayList<>();
     private final String friendsFile;
     private final String blockedFile;
+    private  Map<String, Message> dashboard = new HashMap<>();
+    private static String currentUsersFile = "current_users.dat";
 
     private static ArrayList<MessageViewerUser> currentUsers
             = loadCurrentUsersFromFile(); //arraylist of current users
 
-    private static String currentUsersFile = "current_users.dat";
 
 //constructor
 
@@ -41,30 +44,37 @@ public class MessageViewerUser implements SocialMediaUser, Serializable {
         this.blockedFile = "blocked_list_" + username + ".dat" ;
         this.friends = loadFriendsFromFriendsFile();
         this.blocked = loadBlockedFromBlockedFile();
+        this.receivedMessages= new ArrayList<>();
+        this.sentMessages = new ArrayList<>();
+        currentUsers.add(this);
     }
 
     // Method to add a user to currentUsers list and save
 
+
     public void addUserToCurrentUsers(MessageViewerUser user) {
-        currentUsers.add(user);
+//        currentUsers.add(user);
         saveCurrentUsersToFile(); // Save updated list to file
     }
 
     // Method to save the currentUsers list to a file
 
     private static void saveCurrentUsersToFile() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(currentUsersFile))) {
-            oos.writeObject(currentUsers);
-        } catch (IOException e) {
-            e.printStackTrace();
+        synchronized (currentUsers) {
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(currentUsersFile))) {
+                oos.writeObject(currentUsers);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            currentUsers = loadCurrentUsersFromFile();
         }
-    }
+ }
 
     // Method to load currentUsers list from a file (for initial setup)
     private static ArrayList<MessageViewerUser> loadCurrentUsersFromFile() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(currentUsersFile))) {
             return (ArrayList<MessageViewerUser>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             return new ArrayList<>(); // Return an empty list if file doesn't exist or error occurs
         }
     }
@@ -133,7 +143,7 @@ public class MessageViewerUser implements SocialMediaUser, Serializable {
         if (friends.contains(friend)) {
             System.out.println("This user is already a friend!");
         } else {
-            friends.add(friend); //fixed bug here.  ArrayList<MessageViewerUser> --> friends
+            friends.add(friend); //fixed bug here.  ArrayList<model.MessageViewerUser> --> friends
         }
         saveFriendsToFriendsFile(); //saving after adding a friend
     }
@@ -142,7 +152,7 @@ public class MessageViewerUser implements SocialMediaUser, Serializable {
         if (!friends.contains(friend)) {
             System.out.println("This user is not in the friends list!");
         } else {
-            friends.remove(friend); //fixed bug here.  ArrayList<MessageViewerUser> --> friends
+            friends.remove(friend); //fixed bug here.  ArrayList<model.MessageViewerUser> --> friends
         }
         saveFriendsToFriendsFile(); //saving after removing a friend
     }
@@ -202,7 +212,7 @@ public class MessageViewerUser implements SocialMediaUser, Serializable {
     public ArrayList<MessageViewerUser> loadFriendsFromFriendsFile() {
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(friendsFile))) {
-            return (ArrayList<MessageViewerUser>)  ois.readObject(); //casting to ArrayList<Message> type object
+            return (ArrayList<MessageViewerUser>)  ois.readObject(); //casting to ArrayList<model.Message> type object
 
         } catch (IOException | ClassNotFoundException e) {
             return new ArrayList<>(); // Return empty list if file doesn't exist
@@ -212,7 +222,7 @@ public class MessageViewerUser implements SocialMediaUser, Serializable {
     public ArrayList<MessageViewerUser> loadBlockedFromBlockedFile() {
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(blockedFile))) {
-            return (ArrayList<MessageViewerUser>)  ois.readObject(); //casting to ArrayList<Message> type object
+            return (ArrayList<MessageViewerUser>)  ois.readObject(); //casting to ArrayList<model.Message> type object
 
         } catch (IOException | ClassNotFoundException e) {
             return new ArrayList<>(); // Return empty list if file doesn't exist
@@ -269,13 +279,140 @@ public class MessageViewerUser implements SocialMediaUser, Serializable {
         synchronized (recipient.receivedMessages) {
             recipient.receivedMessages.add(message);
         }
+        synchronized (currentUsers){
+
+            for(MessageViewerUser user : currentUsers){
+                if(user.getUsername().equals(recipient.getUsername())){
+                    user.sentMessages = recipient.sentMessages;
+                    user.receivedMessages = recipient.receivedMessages;
+                }
+                if(user.getUsername().equals(this.getUsername())){
+                    user.sentMessages = this.sentMessages;
+                    user.receivedMessages = this.receivedMessages;
+                }
+            }
+
+        }
+        saveCurrentUsersToFile();
     }
 
+    public Map<String, Message> allSentAndReceivedMessages() {
+        synchronized(currentUsers){
+            currentUsers = loadCurrentUsersFromFile();
+        };
+        ArrayList<Message> m_sendMessages = new ArrayList<>();
+        ArrayList<Message> m_receivedMessages = new ArrayList<>();
+        for(MessageViewerUser user:currentUsers) {
+            if(user.getUsername().equals(username)) {
+                if(user.sentMessages.size()>0 || user.receivedMessages.size()>0){
+                    System.out.println("user:" + username + "sent size:" + user.sentMessages.size() +", received:" +user.receivedMessages.size());
+                    m_sendMessages = user.sentMessages;
+                    m_receivedMessages = user.receivedMessages;
+                }
+            }
+        }
+        Map<String, Message> peopleMessages = new HashMap<>();
+        synchronized (m_sendMessages) {
+            for (Message message : m_sendMessages) {
+                if (peopleMessages.containsKey(message.getReceiver().getUsername())){
+                    Message msg = peopleMessages.get(message.getReceiver().getUsername());
+                    if(message.date.after(msg.date))
+                        peopleMessages.put(message.getReceiver().getUsername(), message);
+                }
+                else
+                    peopleMessages.put(message.getReceiver().getUsername(), message);
+            }
+        }
+        synchronized (m_receivedMessages) {
+            for (Message message : m_receivedMessages) {
+                if (peopleMessages.containsKey(message.getSender().getUsername())){
+                    Message msg = peopleMessages.get(message.getSender().getUsername());
+                    if(message.date.after(msg.date)){
+                        peopleMessages.put(message.getSender().getUsername(), message );
+                    }
+                }
+                else
+                    peopleMessages.put(message.getSender().getUsername(), message);
+
+            }
+
+        }
+        return peopleMessages;
+    }
+
+    public ArrayList<Message> getAllMessagesFor(MessageViewerUser otherUser) {
+        synchronized(currentUsers){
+            currentUsers = loadCurrentUsersFromFile();
+        };
+        ArrayList<Message> m_sendMessages = new ArrayList<>();
+        ArrayList<Message> m_receivedMessages = new ArrayList<>();
+        for(MessageViewerUser user:currentUsers) {
+            if(user.getUsername().equals(username)) {
+                if(user.sentMessages.size()>0 || user.receivedMessages.size()>0){
+                    m_sendMessages = user.sentMessages;
+                    m_receivedMessages = user.receivedMessages;
+                }
+            }
+        }
+       ArrayList<Message> messages = new ArrayList<>();
+        synchronized (m_sendMessages) {
+            for (Message message : m_sendMessages) {
+                if(message.receiver.getUsername().equals(otherUser.getUsername()))
+                    messages.add(message);
+             }
+        }
+        synchronized (m_receivedMessages) {
+            for (Message message : m_receivedMessages) {
+                if(message.sender.getUsername().equals(otherUser.getUsername()))
+                    messages.add(message);
+             }
+
+        }
+        return messages;
+    }
+
+    public  Map<String, Message> getDashboard() {
+        System.out.println("What happened to my messages");
+        for (MessageThread thread : messageThreads) {
+            Message threadMessage = thread.loadMessagesFromFile().getLast();
+            System.out.println("user 1" + thread.getUser1());
+            System.out.println("user 2" + thread.getUser2());
+            System.out.println("content" + threadMessage.getContent() + "---time" + threadMessage.date);
+            String other = "";
+            if(thread.getUser1().username.equals(this.username))
+                other = thread.getUser2().username;
+            else
+                other = this.username;
+
+            if(dashboard.containsKey(other)){
+                //check if thread's last message is most recent, if yes then replace that
+                Message message = dashboard.get(other);
+                if(message.date.before(threadMessage.date))
+                    dashboard.put(other, threadMessage);
+            }
+            else{
+                dashboard.put(other, threadMessage);
+            }
+        }
+        return dashboard;
+   }
+
+    /*
+    return user by username
+     */
+    public static MessageViewerUser getUser(String username){
+        for (MessageViewerUser user : currentUsers) {
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        return null;
+    }
 
     // method to search for a user based on their username
-    public MessageViewerUser searchUser(String susername) throws InvalidUsernameException {
+    public MessageViewerUser searchUser(String username) throws InvalidUsernameException {
         for (MessageViewerUser user : currentUsers) {
-            if (user.getUsername().equals(susername)) {
+            if (user.getUsername().equals(username)) {
                 if (user.getBlocked().contains(this)) {
                     //checks if the user you are searching for has you blocked or not
                     throw new InvalidUsernameException("You cannot search for this user as they have blocked you.");

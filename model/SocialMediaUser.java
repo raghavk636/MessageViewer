@@ -1,8 +1,10 @@
+package model;
+
 import java.util.List;
 
 
 /**
- * SocialMediaUser - An interface representing a user in the social media application,
+ * model.SocialMediaUser - An interface representing a user in the social media application,
  * defining essential user functionalities such as friend management, messaging, and profile viewing.
  * 
  * @author L10-Team 1

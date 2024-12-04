@@ -62,7 +62,7 @@ public class ClientGUI implements ClientInterface {
 		
 		Scanner keyboard = new Scanner(System.in);
 		
-		System.out.println("Welcome to Message Viewer! \nChoose one of the following options to continue!");
+		System.out.println("Welcome to model.Message Viewer! \nChoose one of the following options to continue!");
 		boolean homeAgain = true;
 		while(homeAgain) {
 			int homeScreenChoice = startScreen();
@@ -121,7 +121,7 @@ public class ClientGUI implements ClientInterface {
 					//exceptions
 					break;
 				case 3:
-					System.out.println("Thank you for using Message Viewer!");
+					System.out.println("Thank you for using model.Message Viewer!");
 					homeAgain = false;
 					break;
 			}

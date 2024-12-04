@@ -1,8 +1,10 @@
+package model;
+
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Date;
 
 /**
- * Message - Represents a message exchanged between users, containing content, sender, and receiver details.
+ * model.Message - Represents a message exchanged between users, containing content, sender, and receiver details.
  *
  * @author L10-Team 1
  * @version November 3, 2024
@@ -14,7 +16,7 @@ public class Message implements MessageInterface, Serializable {
     String content = ""; //content of the message
     MessageViewerUser sender; //user that sends the message
     MessageViewerUser receiver; //user that recieves the message
-
+    Date date;
     // constructors
 
 
@@ -24,22 +26,29 @@ public class Message implements MessageInterface, Serializable {
         this.content = content;
         this.sender = sender;
         this.receiver = receiver;
+        date = new Date();
     }
 
     public Message(String content, String username) {
         this.content = content;
+        date= new Date();
 
     }
 
     public Message(String content, MessageViewerUser sender) {
         this.content = content;
         this.sender = sender;
+        date = new Date();
     }
 
 
-    //getter methods for Message objects
+    //getter methods for model.Message objects
 
     //gets content of a message
+
+    public String getDate(){
+        return date.toString();
+    }
     public String getContent() {
         return content;
     }

@@ -5,6 +5,8 @@
  * @author L10-Team 1
  * @version November 14, 2024
  */
+import model.MessageViewerUser;
+
 import java.util.ArrayList;
 
 public interface ServerInterface {

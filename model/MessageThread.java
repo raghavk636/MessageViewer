@@ -1,8 +1,10 @@
+package model;
+
 import java.io.*;
 import java.util.ArrayList;
 
 /**
- * MessageThread - Manages a conversation thread between two users, allowing messages to be
+ * model.MessageThread - Manages a conversation thread between two users, allowing messages to be
  * added, saved, and loaded from a file. Each thread has a unique file path for chat history storage.
  *  
  * @version November 3, 2024
@@ -15,7 +17,7 @@ public class MessageThread implements MessageThreadInterface, Serializable {
 
     private MessageViewerUser user1;
     private MessageViewerUser user2;
-    private ArrayList<Message> messages; //arraylist of messages that go in the chat history file
+    public ArrayList<Message> messages; //arraylist of messages that go in the chat history file
     private String filePath; //filepath where the chathistory is stored and loaded from
 
 
@@ -29,12 +31,18 @@ public class MessageThread implements MessageThreadInterface, Serializable {
 
 
         this.messages = loadMessagesFromFile(); // Load existing messages on startup
+
+        ///  any way to let
+        /// "chat_history_" + user1.getUsername() + "_" + user2.getUsername() + ".dat"
+        /// and
+        /// "chat_history_" + user1.getUsername() + "_" + user2.getUsername() + ".dat"
     }
 
     // Add message to the chat and save to file
 
     public void addMessage(String content, MessageViewerUser sender) {
-        Message message = new Message(content, sender.getUsername());
+//        Message message = new Message(content, sender.getUsername());
+        Message message = new Message(content, user1, user2);
         messages.add(message);
         saveMessagesToFile(); // Save whenever a new message is added
     }
@@ -64,7 +72,7 @@ public class MessageThread implements MessageThreadInterface, Serializable {
 
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            return (ArrayList<Message>)  ois.readObject(); //casting to ArrayList<Message> type object
+            return (ArrayList<Message>)  ois.readObject(); //casting to ArrayList<model.Message> type object
 
         } catch (IOException | ClassNotFoundException e) {
             return new ArrayList<>(); // Return empty list if file doesn't exist
@@ -77,8 +85,8 @@ public class MessageThread implements MessageThreadInterface, Serializable {
         StringBuilder chatHistory = new StringBuilder(); //init and declaring chatHistory
 
 
-        for (Message msg : messages) { //for each Message object msg in messages
-            chatHistory.append(msg).append("\n"); //appends Message object and and "\n"
+        for (Message msg : messages) { //for each model.Message object msg in messages
+            chatHistory.append(msg).append("\n"); //appends model.Message object and and "\n"
             // to the string chatHistory which can be displayed to the actual users
         }
         return chatHistory.toString();

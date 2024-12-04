@@ -1,5 +1,7 @@
+package model;
+
 /**
- * InvalidPasswordException - A custom exception thrown when an invalid password is provided during a user authentication attempt.
+ * model.InvalidPasswordException - A custom exception thrown when an invalid password is provided during a user authentication attempt.
  *
  * @author L10-Team 1
  * @version November 3, 2024
