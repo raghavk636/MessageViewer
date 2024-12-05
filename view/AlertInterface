@@ -2,7 +2,7 @@ package view;
 
 import javax.swing.JFrame;
 
-public interface IAlert {
+public interface AlertInterface {
     /**
      * Displays an alert with the specified content and parent frame.
      * @param content The message to be displayed in the alert.
