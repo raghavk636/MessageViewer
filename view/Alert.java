@@ -4,7 +4,7 @@ import javax.swing.*;
 import javax.swing.JFrame;
 import java.awt.*;
 
-public class Alert {
+public class Alert implements AlertInterface {
     public Alert(String content, JFrame parent) {
         JFrame frame = new JFrame();
         frame.setTitle("Warning");
