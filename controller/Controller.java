@@ -13,7 +13,7 @@ import java.util.Map;
 /*
 Class to act as a mediator between client and server
  */
-public class Controller {
+public class Controller implements ControllerInterface {
     Socket socket;
     ObjectOutputStream outputStream;
     ObjectInputStream inputStream;
