@@ -1,0 +1,26 @@
+package view;
+
+import javax.swing.*;
+import java.util.ArrayList;
+
+public interface BlockedListInterace {
+    /**
+     * Renders the user interface for the blocked list.
+     */
+    void renderUI();
+
+    /**
+     * Renders the header panel, displaying the list of blocked users.
+     */
+    void renderHeader();
+
+    /**
+     * Renders the sidebar panel with navigation buttons.
+     */
+    void renderSideBar();
+
+    /**
+     * Logs out the current user and redirects to the welcome screen.
+     */
+    void logOut();
+}
