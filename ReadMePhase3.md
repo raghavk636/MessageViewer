@@ -3,11 +3,7 @@ Welcome to MessageViewer, a message-viewing app that allows users to send and re
 ## GUI
 In this phase, we have introduced a Graphical User Interface (GUI) that allows users to interact with the app by clicking buttons to send direct messages to their friends. The intuitive and interactive user interface provides the best possible experience.
 
-Upon opening the app, users are prompted to either log in or create an account. New users can create a password-protected account and then return to the home screen to log in. After successfully logging in with their username and password, users are directed to their profile page. This page offers multiple features, including:
-
-Adding friends
-Blocking other users
-Writing and sending direct messages
+Upon opening the app, users are prompted to either log in or create an account. New users can create a password-protected account and then return to the home screen to log in. After successfully logging in with their username and password, users are directed to their profile page. This page offers multiple features, including adding friends, blocking other users, and writing and sending direct messages
 
 ## Direct Messaging
 Users can send messages to any of their friends by entering the friend’s username and typing the message in the provided text box. Once sent, the message is stored in a message ArrayList, maintaining a history of all past messages for future reference.
