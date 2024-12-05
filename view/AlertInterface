@@ -1,0 +1,18 @@
+package view;
+
+import javax.swing.JFrame;
+
+public interface IAlert {
+    /**
+     * Displays an alert with the specified content and parent frame.
+     * @param content The message to be displayed in the alert.
+     * @param parent The parent frame for positioning the alert.
+     */
+    void showAlert(String content, JFrame parent);
+
+    /**
+     * Displays an alert with the specified content.
+     * @param content The message to be displayed in the alert.
+     */
+    void showAlert(String content);
+}
