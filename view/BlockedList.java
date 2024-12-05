@@ -12,7 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class BlockedList implements BlockedListInterface {
+public class BlockedList {
     Controller controller;
     MessageViewerUser currentUser;
     JFrame frame;
