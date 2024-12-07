@@ -102,4 +102,31 @@ class MessageViewerServerTest {
         MessageViewerUser authenticatedUser = MessageViewerServer.ClientHandler.authenticateUser("frank123", "wrongpassword");
         assertNull(authenticatedUser, "Authentication should fail with incorrect password");
     }
+    
+    @Test
+    void testCreateAccount_UsernameAlreadyExists() throws IOException, ClassNotFoundException {
+        // Prepare the existing user in the currentUsers list
+        MessageViewerUser existingUser = new MessageViewerUser("Existing User", "existing123", "password123");
+        server.currentUsers.add(existingUser);
+
+        // Prepare the streams you want to inject
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(byteArrayOutputStream);
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+            ("New User\nexisting123\npassword123").getBytes()); // Attempt to create with existing username
+        ObjectInputStream in = new ObjectInputStream(byteArrayInputStream);
+
+        // Use the overloaded constructor to inject streams
+        MessageViewerServer.ClientHandler clientHandler = server.new ClientHandler(in, out);
+
+        // Call the handleCreateAccount method
+        clientHandler.handleCreateAccount();
+
+        // Capture and assert the response from the server
+        String output = byteArrayOutputStream.toString().trim();
+        assertEquals("Username already exists. Please choose another.", output, "Should return the 'username already exists' message");
+    }
+
+    
 }
