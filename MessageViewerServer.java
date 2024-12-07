@@ -1,5 +1,4 @@
-import model.BlockedUserException;
-import model.MessageViewerUser;
+
 
 import java.io.*;
 import java.net.*;
@@ -69,7 +68,13 @@ public class MessageViewerServer implements ServerInterface {
                 e.printStackTrace();
             }
         }
-
+        
+        //for testing purposes:
+        public ClientHandler(ObjectInputStream in, ObjectOutputStream out) {
+            this.in = in;
+            this.out = out;
+        }
+        
         @Override
         public void run() {
             try {
@@ -269,7 +274,7 @@ public class MessageViewerServer implements ServerInterface {
         }
 
         // Handle creating a new account
-        private void handleCreateAccount() throws IOException, ClassNotFoundException {
+        public void handleCreateAccount() throws IOException, ClassNotFoundException {
 
             String name = (String) in.readObject();
             String username = (String) in.readObject();
@@ -329,4 +334,3 @@ public class MessageViewerServer implements ServerInterface {
 
 
 }
-
