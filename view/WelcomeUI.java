@@ -52,7 +52,7 @@ public class WelcomeUI {
         panel = new JPanel(new BorderLayout());
         panel.setBackground(GUIConstants.background);
         panel.setBorder(BorderFactory.createEmptyBorder(53, 84, 76, 84));
-        panel.add(new JLabel("Purdue Messenger", 40, GUIConstants.blue, Font.BOLD), BorderLayout.NORTH);
+        panel.add(new JLabel("Message Viewer", 40, GUIConstants.blue, Font.BOLD), BorderLayout.NORTH);
     }
 
     private void renderCentralPanel(){
