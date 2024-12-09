@@ -9,7 +9,7 @@ import java.util.*;
  * for navigation and placeholders for server communication.
  *
  * @author L10-Team 1
- * @version November 16, 2024
+ * @version December 8th, 2024
  */
 
 public class ClientGUI implements ClientInterface {
